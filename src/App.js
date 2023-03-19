@@ -5,7 +5,7 @@ const { readLine, print, close } = MissionUtils.Console;
 
 // - [x] 코치가 못 먹는 메뉴를 **, 로 구분해서** 입력 받는다.
 // - [x] 코치가 못 먹는 메뉴가 없다면 빈 값을 입력 받는다.
-// - [ ] 코치가 못 먹는 메뉴가 0개 미만이거나 2개를 초과한다면 `코치가 못 먹는 메뉴는 최소 0개 이상 최대 2개 이하로 입력해야 합니다`를 출력한다.
+// - [x] 코치가 못 먹는 메뉴가 0개 미만이거나 2개를 초과한다면 `코치가 못 먹는 메뉴는 최소 0개 이상 최대 2개 이하로 입력해야 합니다`를 출력한다.
 
 const SAMPLE = {
 	일식: '규동, 우동, 미소시루, 스시, 가츠동, 오니기리, 하이라이스, 라멘, 오코노미야끼',
@@ -16,13 +16,29 @@ const SAMPLE = {
 	양식: '라자냐, 그라탱, 뇨끼, 끼슈, 프렌치 토스트, 바게트, 스파게티, 피자, 파니니',
 };
 
-class App {
-	play() {
+// 입출력
+const InputView = {
+	readFoodList() {
 		readLine("못 먹는 메뉴를 입력해 주세요.", (foods) => {
-			const foodList = foods.split(",");
-			close();
+			const foodList = foods.split(","); 
+			if(!Validation.IsValidfoodLength(foodList)) this.readFoodList();
+
 		});
 	}	
+}
+
+// 예외 처리
+const Validation = {
+	IsValidfoodLength(foodList) {
+		return (foodList.length >= 0 && foodList.length <= 2)
+	}	
+}
+
+// 메인
+class App {
+	play() {
+		InputView.readFoodList();
+	}
 }
 
 const app = new App();
