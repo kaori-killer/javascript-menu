@@ -5,7 +5,8 @@ const { pickNumberInRange, shuffle } = MissionUtils.Random;
 // ### 코치 이름 입력
 
 // - [x] 코치의 이름을 입력 받는다.
-// - [ ] 코치의 이름이 2글자 미만이거나 4글자를 초과한다면 `코치는 최소 2명 이상 입력해야 합니다`를 출력한다.
+// - [x] 코치의 이름이 2글자 미만이거나 4글자를 초과한다면 `코치의 최소 2글자, 최대 4글자로 입력해야 합니다`를 출력한다.
+// - [ ] 코치의 수가 2명 미만이거나 5명을 초과한다면 `코치는 최소 2명 이상 입력해야 합니다`를 출력한다.
 
 const SAMPLE = {
 	일식: '규동, 우동, 미소시루, 스시, 가츠동, 오니기리, 하이라이스, 라멘, 오코노미야끼',
@@ -22,15 +23,16 @@ const InputView = {
 		readLine(`${name}(이)가 못 먹는 메뉴를 입력해 주세요.`, (foods) => {
 			app.coachFood  = foods.split(","); 
 			if(Validation.overfoodLength(app.coachFood)) this.readFoodList();
-			app.recommendWeekMenu();
+			else app.recommendWeekMenu();
 		});
 	},
 	readCoachName(){
 		readLine("코치의 이름을 입력해 주세요. (, 로 구분)", (names) => {
 			app.coachNames = names.split(",");
-			app.coachNames.map((name)=>this.readFoodList(name));
+			if(Validation.InvalidCoachNameLength(app.coachNames)) this.readCoachName();
+			else app.coachNames.map((name)=>this.readFoodList(name));
 		});
-	}
+	},
 }
 
 // 출력
@@ -44,6 +46,9 @@ const Validation = {
 	overfoodLength(foodList) {
 		return (foodList.length > 2);
 	},
+	InvalidCoachNameLength(coachNames) {
+		return (coachNames.filter((name)=> name.length < 2 || name.length > 4).length);
+	}
 }
 
 // 메인
