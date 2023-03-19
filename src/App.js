@@ -8,7 +8,7 @@ const { pickNumberInRange, shuffle } = MissionUtils.Random;
 // - [x] 코치가 못 먹는 메뉴가 포함된 카테고리인 경우 다시 카테고리를 선택한다.
 // - [x] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
 // - [x] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
-// - [ ] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
+// - [x] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
 // - [ ] 위 과정을 4번 더 반복한다.
 
 const SAMPLE = {
@@ -94,9 +94,17 @@ class App {
 	//메뉴
 	selectMenu(newCategory) {
 		const targetMenuArray = this.sampleCategoryMenu.filter((sample)=>sample.category === newCategory)[0].menu;
-		print(targetMenuArray)
-		const menu = shuffle(targetMenuArray.map((_, index)=>index))[0];
-		this.coachRecommendationMenu.push(targetMenuArray[menu]);
+		const newMenu = targetMenuArray[shuffle(targetMenuArray.map((_, index)=>index))[0]];
+		if(this.IsDuplicatetionMenu(newMenu)){
+			this.selectMenu(newCategory);
+		}
+		this.coachRecommendationMenu.push(newMenu);
+		print(this.coachRecommendationMenu);
+	}
+
+	IsDuplicatetionMenu(newMenu) {
+		const count = this.coachRecommendationMenu.filter((preMenu)=> preMenu === newMenu).length;
+		return count > 0 ? true : false;
 	}
 }
 
