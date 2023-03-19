@@ -9,7 +9,7 @@ const { pickNumberInRange, shuffle } = MissionUtils.Random;
 // - [x] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
 // - [x] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
 // - [x] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
-// - [ ] 위 과정을 4번 더 반복한다.
+// - [x] 위 과정을 4번 더 반복한다.
 
 const SAMPLE = {
 	일식: '규동, 우동, 미소시루, 스시, 가츠동, 오니기리, 하이라이스, 라멘, 오코노미야끼',
@@ -26,7 +26,7 @@ const InputView = {
 		readLine("못 먹는 메뉴를 입력해 주세요.", (foods) => {
 			app.coachFood  = foods.split(","); 
 			if(Validation.overfoodLength(app.coachFood)) this.readFoodList();
-			app.selectCategory();
+			app.recommendWeekMenu();
 		});
 	}	
 }
@@ -54,7 +54,7 @@ class App {
 		this.coachRecommendationMenu = [];
 
 	}
-	
+
 	sampleToCategory() {
 		Object.keys(SAMPLE).map((category, idx) => {
 			this.sampleCategoryMenu.push({
@@ -62,22 +62,33 @@ class App {
 				menu: SAMPLE[category].split(", ")
 			})
 		});
-	}
+	}	
 
 	play() {
 		this.sampleToCategory();
 		InputView.readFoodList();
 	}
 
+	recommendWeekMenu() {
+		for(let i=0; i<5; i++){
+			this.selectCategory();
+		}
+		print(this.coachRecommendationCategory);
+		print(this.coachRecommendationMenu);
+	}
+
 	// 카테고리
 	selectCategory() {
 		const newCategory = this.sampleCategoryMenu[pickNumberInRange(1, 5)-1].category;
-		console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory));
+		// console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory));
 		if(this.IscoachFoodInCategory(newCategory) || this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory)){
 			this.selectCategory();
 		}
-		this.coachRecommendationCategory.push(newCategory);
-		this.selectMenu(newCategory);
+		else{
+			this.coachRecommendationCategory.push(newCategory);
+			// print(this.coachRecommendationCategory);
+			this.selectMenu(newCategory);	
+		}
 	}
 	
 	IscoachFoodInCategory(newCategory) {
@@ -98,8 +109,10 @@ class App {
 		if(this.IsDuplicatetionMenu(newMenu)){
 			this.selectMenu(newCategory);
 		}
-		this.coachRecommendationMenu.push(newMenu);
-		print(this.coachRecommendationMenu);
+		else {
+			this.coachRecommendationMenu.push(newMenu);
+			// print(this.coachRecommendationMenu);	
+		}
 	}
 
 	IsDuplicatetionMenu(newMenu) {
