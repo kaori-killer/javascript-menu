@@ -10,15 +10,16 @@ const SAMPLE = {
 	양식: '라자냐, 그라탱, 뇨끼, 끼슈, 프렌치 토스트, 바게트, 스파게티, 피자, 파니니',
 };
 
-// ### 수정
+// ### 1명의 코치에서 N명의 코치로 확대
 
-// - [x] 잘못 이해한 요구사항에 대한 구현을 수정한다.(코치가 못 먹는 메뉴가 포함된 카테고리인 경우 다시 카테고리를 선택한다.)
-// - [ ] 먹지 못하는 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
-// - [ ] 먹지 못하는 메뉴가 없으면 빈 값을 입력한다.에 대한 오류 확인
+// - [x] 코치가 먹지 못하는 음식 배열을 코치 별로 만든다.
+
 
 // 입력
 const InputView = {
-	readFoodList(name){
+	readFoodList(){
+		const name = app.coachNames[app.coachNamesArrayIndex++];
+		if(app.coachNames.length < app.coachNamesArrayIndex) return close();
 		readLine(`${name}(이)가 못 먹는 메뉴를 입력해 주세요.`, (foods) => {
 			app.coachFood  = foods.split(","); 
 			if(Validation.overfoodLength(app.coachFood)) this.readFoodList();
@@ -29,14 +30,19 @@ const InputView = {
 		readLine("코치의 이름을 입력해 주세요. (, 로 구분)", (names) => {
 			app.coachNames = names.split(",");
 			if(Validation.InvalidCoachNameLength(app.coachNames) || Validation.InvalidCoachNumber(app.coachNames)) this.readCoachName();
-			else app.coachNames.map((name)=>this.readFoodList(name));
+			else this.readFoodList();
 		});
 	},
 }
 
 // 출력
 const OutputView = {
+	printStartComment(){
+		print("점심 메뉴 추천을 시작합니다.");
+	},
 	printRecommendMenu(){
+		print("메뉴 추천 결과입니다.");
+		print("[ 구분 | 월요일 | 화요일 | 수요일 | 목요일 | 금요일 ]");
 	}
 }
 
@@ -63,6 +69,7 @@ class App {
 		this.coachRecommendationMenu = [];
 
 		this.coachNames = [];
+		this.coachNamesArrayIndex = 0;
 	}
 
 	sampleToCategory() {
@@ -76,28 +83,26 @@ class App {
 
 	play() {
 		this.sampleToCategory();
+		for(let i=0;i<5;i++){this.selectCategory();}
 		InputView.readCoachName();
 	}
 
 	recommendWeekMenu() {
-		for(let i=0; i<5; i++){
-			this.selectCategory();
-		}
-		print(this.coachRecommendationCategory);
-		print(this.coachRecommendationMenu);
+		this.coachRecommendationMenu = [];
+		this.coachRecommendationCategory.map((category)=>{
+			this.selectMenu(category);
+		});
+		InputView.readFoodList();
 	}
 
 	// 카테고리
 	selectCategory() {
 		const newCategory = this.sampleCategoryMenu[pickNumberInRange(1, 5)-1].category;
-		// console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory));
 		if(this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory)){
 			this.selectCategory();
 		}
 		else{
 			this.coachRecommendationCategory.push(newCategory);
-			// print(this.coachRecommendationCategory);
-			this.selectMenu(newCategory);	
 		}
 	}
 
@@ -115,7 +120,6 @@ class App {
 		}
 		else {
 			this.coachRecommendationMenu.push(newMenu);
-			// print(this.coachRecommendationMenu);	
 		}
 	}
 	
