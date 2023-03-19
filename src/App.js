@@ -7,7 +7,7 @@ const { pickNumberInRange } = MissionUtils.Random;
 
 // - [x] **MissionUtils 라이브러리의 Random.pickNumberInRange()** 를 이용해 카테코리를 무작위로 선택한다.
 // - [x] 코치가 못 먹는 메뉴가 포함된 카테고리인 경우 다시 카테고리를 선택한다.
-// - [ ] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
+// - [x] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
 // - [ ] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
 // - [ ] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
 // - [ ] 위 과정을 4번 더 반복한다.
@@ -68,7 +68,7 @@ class App {
 	}
 
 	selectCategory() {
-		const newCategory = this.sampleCategoryMenu[1].category;
+		const newCategory = this.sampleCategoryMenu[Category[pickNumberInRange(1, 5)-1]].category;
 		console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachCategory, newCategory));
 		if(this.IscoachFoodInCategory(newCategory) || this.IsDuplicatetionCategory(this.coachCategory, newCategory)){
 			this.selectCategory();
@@ -85,7 +85,7 @@ class App {
 
 	IsDuplicatetionCategory(coachCategory, newCategory) {
 		const count = coachCategory.filter(categoryName => categoryName === newCategory).length;
-		return count > 2 ? true : false;
+		return count >= 2 ? true : false;
 	}
 }
 
