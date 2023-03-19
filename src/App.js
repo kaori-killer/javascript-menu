@@ -2,14 +2,10 @@ const MissionUtils = require("@woowacourse/mission-utils");
 const { readLine, print, close } = MissionUtils.Console;
 const { pickNumberInRange, shuffle } = MissionUtils.Random;
 
-// ### 메뉴 추천
+// ### 코치 이름 입력
 
-// - [x] **MissionUtils 라이브러리의 Random.pickNumberInRange()** 를 이용해 카테코리를 무작위로 선택한다.
-// - [x] 코치가 못 먹는 메뉴가 포함된 카테고리인 경우 다시 카테고리를 선택한다.
-// - [x] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
-// - [x] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
-// - [x] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
-// - [x] 위 과정을 4번 더 반복한다.
+// - [x] 코치의 이름을 입력 받는다.
+// - [ ] 코치의 이름이 2글자 미만이거나 4글자를 초과한다면 `코치는 최소 2명 이상 입력해야 합니다`를 출력한다.
 
 const SAMPLE = {
 	일식: '규동, 우동, 미소시루, 스시, 가츠동, 오니기리, 하이라이스, 라멘, 오코노미야끼',
@@ -22,13 +18,19 @@ const SAMPLE = {
 
 // 입력
 const InputView = {
-	readFoodList() {
-		readLine("못 먹는 메뉴를 입력해 주세요.", (foods) => {
+	readFoodList(name){
+		readLine(`${name}(이)가 못 먹는 메뉴를 입력해 주세요.`, (foods) => {
 			app.coachFood  = foods.split(","); 
 			if(Validation.overfoodLength(app.coachFood)) this.readFoodList();
 			app.recommendWeekMenu();
 		});
-	}	
+	},
+	readCoachName(){
+		readLine("코치의 이름을 입력해 주세요. (, 로 구분)", (names) => {
+			app.coachNames = names.split(",");
+			app.coachNames.map((name)=>this.readFoodList(name));
+		});
+	}
 }
 
 // 출력
@@ -53,6 +55,7 @@ class App {
 		this.coachRecommendationCategory = [];
 		this.coachRecommendationMenu = [];
 
+		this.coachNames = [];
 	}
 
 	sampleToCategory() {
@@ -66,7 +69,7 @@ class App {
 
 	play() {
 		this.sampleToCategory();
-		InputView.readFoodList();
+		InputView.readCoachName();
 	}
 
 	recommendWeekMenu() {
