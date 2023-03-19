@@ -1,14 +1,13 @@
 const MissionUtils = require("@woowacourse/mission-utils");
 const { readLine, print, close } = MissionUtils.Console;
-const { pickNumberInRange } = MissionUtils.Random;
-
+const { pickNumberInRange, shuffle } = MissionUtils.Random;
 
 // ### 메뉴 추천
 
 // - [x] **MissionUtils 라이브러리의 Random.pickNumberInRange()** 를 이용해 카테코리를 무작위로 선택한다.
 // - [x] 코치가 못 먹는 메뉴가 포함된 카테고리인 경우 다시 카테고리를 선택한다.
 // - [x] 2번 이상 추천한 카테고리인 경우 다시 카테고리를 선택한다.
-// - [ ] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
+// - [x] **MissionUtils 라이브러리의 Random.shuffle()** 이용해 첫 번째 값으로 메뉴를 선택한다.
 // - [ ] 이미 추천한 메뉴라면 다시 섞은 후 첫 번째 값으로 메뉴를 사용한다.
 // - [ ] 위 과정을 4번 더 반복한다.
 
@@ -49,8 +48,11 @@ const Validation = {
 class App {
 	constructor(){
 		this.sampleCategoryMenu = [];
-		this.coachCategory = ["한식", "한식"];
 		this.coachFood = [];
+
+		this.coachRecommendationCategory = [];
+		this.coachRecommendationMenu = [];
+
 	}
 	
 	sampleToCategory() {
@@ -67,14 +69,15 @@ class App {
 		InputView.readFoodList();
 	}
 
+	// 카테고리
 	selectCategory() {
-		const newCategory = this.sampleCategoryMenu[Category[pickNumberInRange(1, 5)-1]].category;
-		console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachCategory, newCategory));
-		if(this.IscoachFoodInCategory(newCategory) || this.IsDuplicatetionCategory(this.coachCategory, newCategory)){
+		const newCategory = this.sampleCategoryMenu[pickNumberInRange(1, 5)-1].category;
+		console.log(this.IscoachFoodInCategory(newCategory), this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory));
+		if(this.IscoachFoodInCategory(newCategory) || this.IsDuplicatetionCategory(this.coachRecommendationCategory, newCategory)){
 			this.selectCategory();
 		}
-		this.coachCategory.push(newCategory);
-		print(this.coachCategory);
+		this.coachRecommendationCategory.push(newCategory);
+		this.selectMenu(newCategory);
 	}
 	
 	IscoachFoodInCategory(newCategory) {
@@ -86,6 +89,14 @@ class App {
 	IsDuplicatetionCategory(coachCategory, newCategory) {
 		const count = coachCategory.filter(categoryName => categoryName === newCategory).length;
 		return count >= 2 ? true : false;
+	}
+
+	//메뉴
+	selectMenu(newCategory) {
+		const targetMenuArray = this.sampleCategoryMenu.filter((sample)=>sample.category === newCategory)[0].menu;
+		print(targetMenuArray)
+		const menu = shuffle(targetMenuArray.map((_, index)=>index))[0];
+		this.coachRecommendationMenu.push(targetMenuArray[menu]);
 	}
 }
 
