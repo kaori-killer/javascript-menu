@@ -13,7 +13,7 @@ const SAMPLE = {
 
 // - [x] 프로그램을 시작할 때, `점심 메뉴 추천을 시작합니다.` 문구를 출력한다.
 // - [x] 추천이 완료되면, `메뉴 추천 결과입니다.`와 메뉴 추천 결과를 출력한다.
-// - [ ] 추천 결과의 출력이 완료되면, `추천을 완료했습니다.`를 출력한다.
+// - [x] 추천 결과의 출력이 완료되면, `추천을 완료했습니다.`를 출력한다.
 
 // 입력
 const InputView = {
@@ -47,6 +47,9 @@ const OutputView = {
 	},
 	printRecommendMenu(){
 		print(app.coachRecommendationMenu);
+	},
+	printEndComment(){
+		print("추천을 완료했습니다.");
 	}
 }
 
@@ -92,6 +95,7 @@ class App {
 		OutputView.printStartComment();
 		InputView.readCoachName();
 		OutputView.printRecommendCategory();
+		OutputView.printEndComment();
 	}
 
 	recommendWeekMenu() {
